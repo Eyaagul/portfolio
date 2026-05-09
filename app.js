@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (!reduceMotion) {
@@ -15,6 +15,7 @@
 
     const certModal = document.getElementById("cert-modal");
     const certModalImage = document.getElementById("cert-modal-image");
+    const certModalPdf = document.getElementById("cert-modal-pdf");
     const certModalTitle = document.getElementById("cert-modal-title");
     const certOriginalLink = document.getElementById("cert-original-link");
     const certCloseBtn = document.getElementById("cert-close-btn");
@@ -138,18 +139,35 @@
         if (certModalImage) {
             certModalImage.src = "";
             certModalImage.alt = "";
+            certModalImage.style.display = "block";
+        }
+        if (certModalPdf) {
+            certModalPdf.src = "";
+            certModalPdf.style.display = "none";
         }
     };
 
     const openCertModal = (src, title) => {
-        if (!certModal || !certModalImage || !certModalTitle || !certOriginalLink) {
+        if (!certModal || !certModalTitle || !certOriginalLink) {
             return;
         }
 
-        certModalImage.src = src;
-        certModalImage.alt = title;
         certModalTitle.textContent = title;
         certOriginalLink.href = src;
+
+        const isPdf = src.toLowerCase().endsWith(".pdf");
+
+        if (isPdf && certModalPdf) {
+            if (certModalImage) certModalImage.style.display = "none";
+            certModalPdf.src = src;
+            certModalPdf.style.display = "block";
+        } else if (certModalImage) {
+            if (certModalPdf) certModalPdf.style.display = "none";
+            certModalImage.src = src;
+            certModalImage.alt = title;
+            certModalImage.style.display = "block";
+        }
+
         certModal.classList.add("is-open");
         certModal.setAttribute("aria-hidden", "false");
         document.body.classList.add("modal-open");
